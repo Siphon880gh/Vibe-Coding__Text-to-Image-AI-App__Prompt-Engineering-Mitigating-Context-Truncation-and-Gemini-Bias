@@ -65,9 +65,9 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose }) => {
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-6xl max-h-full flex flex-col items-center gap-4 z-10">
+      <div className="relative w-full max-w-6xl max-h-full flex flex-col items-center gap-4 z-10 pointer-events-none">
         {/* Controls Header */}
-        <div className="w-full flex justify-between items-center text-white px-2">
+        <div className="w-full flex justify-between items-center text-white px-2 pointer-events-auto">
           <div className="flex-1 max-w-[70%]">
             <p className="text-sm sm:text-lg font-medium truncate opacity-90">{image.prompt}</p>
           </div>
@@ -109,7 +109,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose }) => {
 
         {/* Image Container */}
         <div 
-          className="relative w-full h-full flex-1 overflow-hidden flex items-center justify-center rounded-2xl bg-slate-900 cursor-grab active:cursor-grabbing border border-white/5"
+          className="relative w-full flex-1 min-h-0 overflow-auto flex items-center justify-center rounded-2xl bg-slate-900 cursor-grab active:cursor-grabbing border border-white/5 pointer-events-auto"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -119,9 +119,9 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose }) => {
             src={image.url}
             alt={image.prompt}
             draggable={false}
-            className="max-w-full max-h-full transition-transform duration-200 ease-out select-none"
+            className="max-w-full max-h-full w-auto h-auto object-contain select-none transition-transform duration-200 ease-out"
             style={{
-              transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+              transform: `translate(${position.x}px, ${position.y}px) scale(${zoom})`,
             }}
           />
           
@@ -133,7 +133,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose }) => {
         </div>
 
         {/* Action Bar */}
-        <div className="flex gap-4">
+        <div className="flex gap-4 pointer-events-auto">
           <a 
             href={image.url} 
             download={`gemini-gen-${image.id}.png`}
