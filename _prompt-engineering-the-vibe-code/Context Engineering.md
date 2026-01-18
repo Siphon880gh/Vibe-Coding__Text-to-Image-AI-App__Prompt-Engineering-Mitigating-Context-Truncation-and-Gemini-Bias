@@ -1,0 +1,158 @@
+When a repo gets big, an AI model may read your code differently to “save time”:
+
+* **It may skim and stop early** once it thinks it understands enough. If the important details are in another file, it can edit the wrong place and **break your app**.
+* **It may delete or overwrite unrelated code**, even removing **200+ lines** from an existing feature while trying to change something else.
+* **It may spend extra tokens** trying to rebuild the “big picture,” which **costs more** and can lead to **guessing** when it runs out of space.
+
+## AGENTS.md is your codebase map
+
+**AGENTS.md** explains:
+
+* what the app does
+* how the code is organized
+* where the key parts live
+
+This helps the AI:
+
+* **avoid deleting unrelated code**
+* **make fewer wrong assumptions**
+* **use fewer tokens (lower cost)**
+
+## Step 1: Create AGENTS.md
+
+Start your AGENTS.md using this prompt:
+```
+We’ve just updated the code. Please update or generate the `AGENTS.md` documentation so **AI tools** can reliably understand the project and generate code safely.  
+  
+**Goal:**    
+Maintain `AGENTS.md` and `context-*.md` so any AI assistant always has a fast, accurate way to re-learn the project and answer prompts effectively—without risking accidental code loss.  
+  
+---  
+  
+## 1. Base `AGENTS.md` (High-Level Overview)  
+  
+Provide a **high-level description** of:  
+- What the app does  
+- Tech stack  
+- Architecture
+- File Tree – highlight relevant files and their roles
+- High-level code flow  
+  
+Include:  
+- A short **relevant file tree**  
+- Selective **inline code snippets** with file references  
+  
+### ⚠️ Line Reference Rule (Important)  
+  
+Do **NOT** reference exact line numbers when describing code.  
+  
+**Reason:**    
+Exact line numbers are fragile and inefficient because:  
+- Code changes frequently  
+- Line numbers shift with every edit  
+- This creates unnecessary AI rework and increases race-condition risk  
+- Maintaining exact references wastes compute and token budget  
+  
+**Instead, use approximate location cues**, such as:  
+- “Near the top of the file”  
+- “Roughly 25% into the file”  
+- “Around lines 100–150”  
+- “In the middle of the file”  
+- “Below function `X`”  
+- “Near the end of the file”  
+  
+This level of precision is sufficient for **high-level understanding** and makes it easy to navigate the code later without brittle references.  
+  
+👉 Add a short reminder note at the top of **each** `AGENTS.md` and `context-*.md` file stating that **approximate references are intentional**.  
+  
+---  
+  
+## 2. Feature-Specific Context Files (`context-*.md`)  
+  
+If `AGENTS.md` becomes too long:  
+1. First, condense it.  
+2. If still too long, split details into feature-specific files:  
+   - `context-auth.md`  
+   - `context-ui.md`  
+   - `context-api.md`  
+   - etc.  
+  
+Each `context-*.md` file should:  
+- Follow the same outline as `AGENTS.md`  
+- Cover **only its own module**  
+- Use approximate code-location references (same rule as above)  
+  
+`AGENTS.md` (no suffix) must always remain the **high-level overview**, possibly paired with feature context*.md files for detail. We look into the codebase afterwards if the context files are insufficient. This keeps executions token efficient.  
+  
+---  
+  
+## 3. Recent Changes Awareness  
+  
+You may read the git log to understand what was recently implemented based on commit message names.    
+  
+  
+---  
+  
+## 4. Optimization for Context Windows  
+  
+- Keep documentation **concise** to save tokens  
+- You may include the **total line count** of referenced files (helps decide whether to load entire files later)  
+- When context space is limited:  
+  - Prioritize `AGENTS.md`  
+- Anchor responses explicitly with:  
+  > “Refer to AGENTS.md for high-level context; details are in feature context files.”  
+  
+If you only edited `AGENTS.md` (and not any `context-*.md` files), once finished:  
+- Assess whether `AGENTS.md` has become too long or detailed  
+- If so, determine whether it should be split into feature-specific `context-*.md` files
+```
+
+## Step 2: Always reference AGENTS.md in future coding prompts
+
+For every future prompt that **creates or edits code**, make sure the AI uses **AGENTS.md** as the source of truth.
+
+* If you use **Cursor AI**, it will usually look for **AGENTS.md automatically**.
+* If you use a tool like **Gemini**, you must **remind it** to read and follow AGENTS.md.
+
+If you don't do this, the AI's “understanding” of your repo can drift over time, and you may run into the same problems again (skimming, wrong edits, missing lines, higher token use).
+
+Use this reminder format:
+```
+Refer to AGENTS.md and any applicable context-*.md for high level understanding of the codebase if needed.  
+  
+Let's implement:  
+"""  
+{your_prompt_for_feature_or_change}
+
+SYSTEM OVERRIDE:  
+Make **only** the changes I explicitly request. Do **not** add features, refactor, optimize, or “finish the app” unless I ask.
+
+SYSTEM OVERRIDE:  
+Keep changes **minimal and surgical**: modify only the **relevant files/sections** and only the **lines strictly necessary** to complete the request. Preserve all existing behavior.
+
+SYSTEM OVERRIDE:  
+Treat **AGENTS.md** and any **context-*.md** as **authoritative descriptions of the existing codebase**.
+"""  
+  
+Only after the implementation is complete, you should update AGENTS.md and/or the relevant context-*.md files to reflect the new state of the codebase.
+```
+^ Can replace with: "Let's implement:", "Let's fix:", "Let's adjust:"
+
+Note on Google AI Studio:
+Google AI Studio on random generations will have a bias doing exactly what your SYSTEM OVERRIDES said NOT to do, and out of those random generations, it might choose to ignore your SYSTEM OVERRIDES. This causes the code generation to lose a lot of lines of code or breaks your app. Sometimes Google AI Studio is biased towards eager to complete (doesnt ask permission), completing other features it thinks your app needs, simplifying the UI (at the expensive of breaking or removing full features). It's recommended you supervise the thinking explanation and stop generation as soon as it steers away from your prompt's purpose. It would cancel any code modifications/generations and restore to your code before the prompt was run. If the code generaion has completed, you will have to restore your code from uploading a zip file of the last commit (Google AI Studio can sync to Github, and Github lets you download the zip of the codebase). And you'd have to drag files back into place. Most times you cannot reverse the changes by prompting it to reverse the changes, because Google AI Studio cannot read its own thoughts from the previous turn, although you can read the thoughts.
+
+## Step 3: As needed if forgotten: Refresh AGENTS.md when it might be outdated
+
+Use a refresher prompt if:
+
+* you forgot to update AGENTS.md for a while, or
+* you made major manual changes to the repo
+
+Refresher prompt:
+
+**PROMPT_HERE_REFRESHER**
+
+## Full instructions
+
+My full instructions are here:
+wengindustries.com/app/devbrain/?open=Context%20-%20Ever-updating%20High-Level%20Context%20that%20Optimizes%20Token%20Usage%20and%20Lowers%20Likelihood%20of%20Lines%20disappearing
