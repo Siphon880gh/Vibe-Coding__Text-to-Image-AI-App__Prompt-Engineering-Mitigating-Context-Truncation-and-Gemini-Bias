@@ -1,0 +1,8 @@
+I performed a quick one-shot mega prompt that created a MVP draft, then refined that MVP through follow-up AI prompts and manual edits:
+
+The prompt to create an initial prototype for a text-to-image AI app is:
+```
+Single-page app with a text-to-image prompt. Generated images are stored locally for the current session (no remote hosting) by saving each result as a Base64 data URL (or Blob-backed object URL) and appending it to a preview gallery. Clicking any gallery thumbnail opens the image in a zoomable modal for closer viewing.
+```
+
+Notice I hyperfocused on only the prototype features - no saving or persistence. This limits the chance of bugs produced because the AI can focus on creating the MVP. Subsequent prompts can add persistence and usere. The app will naturally be able to create images from prompts because one of the major perks of Google AI Studio is that it lets you use unlimited tokens in both code generation and any AI API calls that your app uses.

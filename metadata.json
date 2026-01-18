@@ -1,5 +1,5 @@
 {
-  "name": "Gemini Visionary",
+  "name": "Gemini Visionary (Context Truncation and Gemini Bias Mitigation)",
   "description": "A high-end text-to-image studio powered by Gemini, featuring a sleek gallery and interactive zooming capabilities for your creative explorations.",
   "requestFramePermissions": []
 }
