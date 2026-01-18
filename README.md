@@ -7,4 +7,6 @@
 
 By Weng Fei Fung (Weng). 
 
-Prompt-engineered the vibe-coding workflow, creating a text-to-image AI app. This is done through improving code generation quality through context-truncation mitigation techniques and to control for biases from the Gemini 3 Flash Preview model that breaks large codebases.
+Prompt-engineered the vibe-coding workflow, creating a text-to-image AI app. For this repo, we improve code generation quality through context-truncation mitigation techniques and controlling for inherent weaknesses/biases that break large codebases in the Gemini 3 Flash Preview model.
+
+This is part one of a prompt-engineering series focused on improving the vibe-coding workflow. The goal is to ship faster, build more complete MVPs and features, and keep strong human-in-the-loop oversight alongside AI generation. Rather than relying on “vibe coding” alone, Weng applies prompt-engineering techniques to make the process more reliable and produce higher-quality code. And instead of a multi-agent framework, Weng sticks to a single-agent approach—because the AI isn’t quite there yet—and focuses on raising the quality of the generated output.
